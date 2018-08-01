@@ -42,20 +42,27 @@ class GeneticApp extends BaseApp {
   }
 
   /**
-   * Get the chromosome of a trex.
-   * @param {Object} trex - TRex to get the chromosome.
-   * @returns {number[]} A vector representing the chromosome of the trex. 
-   */
-  static getChromosome(trex) {
-    return trex.model.weights.concat(trex.model.biases);
-  }
-
-  /**
    * Method that happen when there is a game reset for the first time,
    * receiving each trex.
    * @param {*} trex - TRex to be initialized.
    */
   initTrex(trex) {
+    trex.model = {};
+    trex.model.weights = [];
+    trex.model.biases = [];
+    for (let i = 0; i < this.numVariables; i += 1) {
+      trex.model.weights[i] = BaseApp.random();
+    }
+    trex.model.biases[0] = BaseApp.random();
+  }
+
+  /**
+   * Get the chromosome of a trex.
+   * @param {Object} trex - TRex to get the chromosome.
+   * @returns {number[]} A vector representing the chromosome of the trex. 
+   */
+  getChromosome(trex) {
+    return trex.model.weights.concat(trex.model.biases);
   }
 
   /**
@@ -63,6 +70,10 @@ class GeneticApp extends BaseApp {
    * Cross and mutate the genome to generate the new population. 
    */
   reset() {
+    const chromosomes = this.rankList.map((trex) => this.getChromosome(trex));
+    this.rankList = [];
+    GeneticApp.cross(chromosomes);
+    this.chromosomes = chromosomes;
   }
 
   /**
@@ -73,6 +84,10 @@ class GeneticApp extends BaseApp {
    * @param {number} i - Index of the trex.
    */
   resetTrex(trex, i) {
+    for (let j = 0; j < this.numVariables; j+= 1) {
+      trex.model.weights[j] = this.chromosomes[i][j];  
+    }
+    trex.model.biases[0] = this.chromosomes[i][this.numVariables];
   }
 
   /**
@@ -81,6 +96,9 @@ class GeneticApp extends BaseApp {
    * @param {Object} trex - TRex to be reset. 
    */
   afterCrash(trex) {
+   if (!this.rankList.includes(trex)) {
+     this.rankList.unshift(trex);
+   }
   }
 }
 

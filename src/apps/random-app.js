@@ -19,6 +19,21 @@ class RandomApp extends BaseApp {
    * @param {Object} trex - TRex instance.
    */
   initTrex(trex) {
+    trex.model = {};
+    trex.model.weights = [];
+    trex.model.biases = [];
+    this.fillModel(trex);
+  }
+
+  /**
+   * Fills the model weights and bias at random.
+   * @param {Object} trex 
+   */
+  fillModel(trex) {
+    for (let i = 0; i < this.numVariables; i += 1) {
+      trex.model.weights[i] = BaseApp.random();
+    }
+    trex.model.biases[0] = BaseApp.random();
   }
 
   /**
@@ -26,6 +41,7 @@ class RandomApp extends BaseApp {
    * @param {Object} trex - TRex instance. 
    */
   afterCrash(trex) {
+    this.fillModel(trex);
   }
 }
 
