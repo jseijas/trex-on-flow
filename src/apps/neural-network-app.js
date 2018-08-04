@@ -12,11 +12,11 @@ class NeuralNetworkApp extends BaseApp {
   constructor(settings) {
     super(settings);
     this.title = 'Neural Network';
-    this.learningRate = this.settings.learningRate || 0.1;
+    this.learningRate = this.settings.learningRate || 5e-3;
     this.hiddenLayerSize = this.settings.hiddenLayerSize || this.numVariables * 2;
     this.outputSize = 2;
-    this.optimizer = tf.train.adadelta(this.learningRate);
-    this.numIterations = this.settings.numIterations || 200;
+    this.optimizer = tf.train.adam(this.learningRate);
+    this.numIterations = this.settings.numIterations || 75;
   }
 
   /**
@@ -75,8 +75,8 @@ class NeuralNetworkApp extends BaseApp {
   predict(trex, inputs) {
     const x = tf.tensor(inputs);
     return tf.tidy(() => {
-      const hiddenLayer = tf.sigmoid(tf.add(tf.matMul(x, trex.model.weights[0]), trex.model.biases[0]));
-      const result = tf.sigmoid(tf.add(tf.matMul(hiddenLayer, trex.model.weights[1]), trex.model.biases[1]));
+      const layer = tf.tanh(tf.add(tf.matMul(x, trex.model.weights[0]), trex.model.biases[0]));
+      const result = tf.tanh(tf.add(tf.matMul(layer, trex.model.weights[1]), trex.model.biases[1]));
       return result;
     });
   }
