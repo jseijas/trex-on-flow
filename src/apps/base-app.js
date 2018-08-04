@@ -98,11 +98,18 @@ class BaseApp {
     } else {
       result = [
         state.obstacleX / GameUtils.canvasWidth,
-        state.obstacleWidth / GameUtils.canvasWidth,
-        state.speed / 100,
+        (state.obstacleX + state.obstacleWidth) / GameUtils.canvasWidth,
+        (state.speed - GameUtils.speed) / GameUtils.maxSpeed,
         state.obstacleY / GameUtils.canvasHeight,
-        state.obstacleHeight / GameUtils.canvasHeight
+        (state.obstacleY + state.obstacleHeight) / GameUtils.canvasHeight
       ]
+    }
+    for (let i = 0; i < result.length; i += 1) {
+      if (result[i] <= 0) {
+        result[i] = 0;
+      } else if (result[i] > 1) {
+        result[i] = 1;
+      }
     }
     return result.slice(0, this.numVariables);
   }
