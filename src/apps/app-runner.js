@@ -10,6 +10,7 @@ function getApp() {
     case 'Random': return new RandomApp(options);
     case 'Genetic': return new GeneticApp(options);
     case 'NeuralNetwork': return new NeuralNetworkApp(options);
+    case 'Neural': return new NeuralNetworkApp(options);
     default: return new RandomApp(options);
   }
 }

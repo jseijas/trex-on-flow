@@ -12,11 +12,12 @@ class NeuralNetworkApp extends BaseApp {
   constructor(settings) {
     super(settings);
     this.title = 'Neural Network';
-    this.learningRate = this.settings.learningRate || 0.1;
+    this.learningRate = this.settings.learningRate || 5e-3;
     this.hiddenLayerSize = this.settings.hiddenLayerSize || this.numVariables * 2;
     this.outputSize = 2;
-    this.optimizer = tf.train.adadelta(this.learningRate);
-    this.numIterations = this.settings.numIterations || 200;
+    this.optimizer = tf.train.adam(this.learningRate);
+    this.numIterations = this.settings.numIterations || 75;
+
   }
 
   /**
@@ -37,26 +38,12 @@ class NeuralNetworkApp extends BaseApp {
     trex.model.biases[1] = tf.variable(tf.zeros([1]));
   }
 
-  /**
-   * Method that happen when there is a reset, except the first time, and
-   * executed for every single trex.
-   * So, at this point the trex must be trained. What we do is to train
-   * the neural network based on the training data of the trex.
-   * @param {Object} trex - TRex to be reset.
-   */
   resetTrex(trex) {
     for (let i = 0; i < this.numIterations; i += 1) {
       this.train(trex, trex.model.training.inputs, trex.model.training.labels);
     }
   }
 
-  /**
-   * Train one time the model, based on the X and Y vectors.
-   * @param {Object} trex
-   * @param {Number[]} inputX - X Vector
-   * @param {Number[]} inputY - Y Vector
-   * @returns {number} Loss value.
-   */
   train(trex, inputX, inputY) {
     let lossStr;
     this.optimizer.minimize(() =>  {
@@ -75,8 +62,8 @@ class NeuralNetworkApp extends BaseApp {
   predict(trex, inputs) {
     const x = tf.tensor(inputs);
     return tf.tidy(() => {
-      const hiddenLayer = tf.sigmoid(tf.add(tf.matMul(x, trex.model.weights[0]), trex.model.biases[0]));
-      const result = tf.sigmoid(tf.add(tf.matMul(hiddenLayer, trex.model.weights[1]), trex.model.biases[1]));
+      const layer = tf.tanh(tf.add(tf.matMul(x, trex.model.weights[0]), trex.model.biases[0]));
+      const result = tf.tanh(tf.add(tf.matMul(layer, trex.model.weights[1]), trex.model.biases[1]));
       return result;
     });
   }

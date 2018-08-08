@@ -96,9 +96,7 @@ class GeneticApp extends BaseApp {
    * @param {Object} trex - TRex to be reset. 
    */
   afterCrash(trex) {
-   if (!this.rankList.includes(trex)) {
-     this.rankList.unshift(trex);
-   }
+    this.rankList.unshift(trex);
   }
 }
 
