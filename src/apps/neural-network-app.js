@@ -17,7 +17,6 @@ class NeuralNetworkApp extends BaseApp {
     this.outputSize = 2;
     this.optimizer = tf.train.adam(this.learningRate);
     this.numIterations = this.settings.numIterations || 75;
-
   }
 
   /**
